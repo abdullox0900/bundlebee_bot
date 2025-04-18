@@ -109,6 +109,95 @@ def get_add_wallets_keyboard():
     )
     return keyboard
 
+# Создание клавиатуры для страницы Commenter (требуется подписка)
+def get_commenter_subscription_required_keyboard():
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(text='💎 Subscribe', callback_data='subscription'),
+                InlineKeyboardButton(text='📘 Detailed Guide', url='https://oliverszmul.com/?')
+            ],
+            [
+                InlineKeyboardButton(text='⬅️ Back', callback_data='back_to_main')
+            ]
+        ]
+    )
+    return keyboard
+
+# Создание клавиатуры для страницы Subscription
+def get_subscription_keyboard():
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(text='💰 Subscribe Weekly', callback_data='subscribe_weekly')
+            ],
+            [
+                InlineKeyboardButton(text='💰 Subscribe Monthly', callback_data='subscribe_monthly')
+            ],
+            [
+                InlineKeyboardButton(text='💎 Subscribe Lifetime', callback_data='subscribe_lifetime')
+            ],
+            [
+                InlineKeyboardButton(text='⬅️ Back', callback_data='back_to_main'),
+                InlineKeyboardButton(text='🔄 Refresh', callback_data='refresh_subscription')
+            ]
+        ]
+    )
+    return keyboard
+
+# Создание клавиатуры для страницы Subscription с низким балансом
+def get_balance_too_low_keyboard():
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(text='⬅️ Back', callback_data='back_to_subscription')
+            ]
+        ]
+    )
+    return keyboard
+
+# Создание клавиатуры для страницы AI Coin Architect (требуется подписка)
+def get_ai_coin_subscription_required_keyboard():
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(text='⬅️ Back', callback_data='back_to_main'),
+                InlineKeyboardButton(text='💎 Subscribe', callback_data='subscription')
+            ]
+        ]
+    )
+    return keyboard
+
+# Создание клавиатуры для страницы Launch (требуется подписка)
+def get_launch_subscription_required_keyboard():
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(text='💎 Subscribe', callback_data='subscription')
+            ],
+            [
+                InlineKeyboardButton(text='🟡 Demo Launch', callback_data='demo_launch'),
+                InlineKeyboardButton(text='📘 Detailed Guide', url='https://oliverszmul.com/?')
+            ],
+            [
+                InlineKeyboardButton(text='⬅️ Back', callback_data='back_to_main')
+            ]
+        ]
+    )
+    return keyboard
+
+# Создание клавиатуры для страницы "Нет кошельков"
+def get_no_wallets_keyboard():
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(text='⬅️ Back', callback_data='back_to_main'),
+                InlineKeyboardButton(text='💰 Wallets', callback_data='wallets')
+            ]
+        ]
+    )
+    return keyboard
+
 # Функция для получения текста для страницы Wallets
 def get_wallets_text():
     return "💰 Create Buy Wallets used to purchase the token."
@@ -125,102 +214,137 @@ def get_add_wallets_text():
 def get_no_wallets_warning():
     return "⚠️ You don't have any wallets!\n\nPlease press the button below to go to the wallets menu to create or load wallets."
 
-# Обработчик команды /start
-@router.message(Command("start"))
-async def send_welcome(message: Message):
-    """
-    Обработчик команды /start
-    """
-    username = message.from_user.username or message.from_user.first_name
+# Функция для получения текста страницы Commenter (требуется подписка)
+def get_commenter_subscription_required_text():
+    text = """💸 Subscription Required to use Commenter
+
+It looks like you don't have an active subscription right now.
+
+💎 Unlock Full Access!
+With a subscription, you'll enjoy unlimited tokens, multi-wallet support, comments and more powerful features to enhance your experience.
+
+📘 Detailed Launch Guide"""
     
-    welcome_text = get_main_text(username)
+    return text
 
-    # Отправляем сообщение с инлайн-клавиатурой и HTML-форматированием, но без превью ссылок
-    await message.answer(welcome_text, reply_markup=get_menu_keyboard(), parse_mode=ParseMode.HTML, disable_web_page_preview=True)
+# Функция для получения текста страницы Subscription
+def get_subscription_text(user_id):
+    # В реальном приложении данные должны быть получены из базы данных
+    # Здесь используем тестовые данные как на скриншотах
+    wallet_address = "2m1dCugubSioZXLuL4MJkmnCfpuVZoYH9xYFagrinP1g"
+    wallet_private_key = "3ddZdcqLEg7SpcL91pwmLgDuwJnbgMipegh2DzAJLTdcDKFj7K1qUvwKzs9acH91AellrZFVQN531aummtBev"
+    balance = "0 SOL"
+    
+    # Данные о подписке
+    subscription_active = False
+    subscription_expires = "Never"
+    
+    # Цены на подписки
+    weekly_price = "2"
+    weekly_discount = "10%"
+    monthly_price = "5"
+    monthly_discount = "20%"
+    lifetime_price = "15"
+    lifetime_discount = "40%"
+    
+    subscription_text = f"""🏦 Subscription Wallet Address:
+{wallet_address}
+🔑 Subscription Wallet Private Key:
+{wallet_private_key}
+💰 Balance: {balance}
 
-# Функция для создания текста справки
-def get_help_text():
-    return """🐝 Welcome to the BundleBee help menu:
+🔔 Your Subscription:
+> ⚪️ You do not have an active subscription yet.
+> Expires in: {subscription_expires}
 
-Main Menu:
-🔍 Quick access to all major functions of the bot.
-Use: /start
+🏦 Pricing:
+💰 Weekly Subscription: {weekly_price} SOL ({weekly_discount} discount)
+💰 Monthly Subscription: {monthly_price} SOL ({monthly_discount} discount)
+💎 Lifetime Subscription: {lifetime_price} SOL ({lifetime_discount} discount)"""
+    
+    return subscription_text
 
-Subscription Menu:
-💎 Subscribe and manage your subscription.
-Use: /subscription
+# Функция для получения текста о слишком низком балансе для недельной подписки
+def get_weekly_balance_too_low_text():
+    wallet_address = "2m1dCugubSioZXLuL4MJkmnCfpuVZoYH9xYFagrinP1g"
+    balance = "0"
+    price = "2"
+    
+    text = f"""⚠️ Balance too low:
+Your Subscription Wallet balance is {balance} SOL, which is not enough 
+to purchase the Weekly Subscription priced at {price} SOL.
 
-Wallet Menu:
-💵 Create and manage wallets, and distribute SOL to buy wallets.
-Use: /wallets
+💸 Please add SOL to the address below to continue:
+🏦 Your Subscription Wallet Address:
+{wallet_address}"""
+    
+    return text
 
-Coin Menu:
-🟡 Create and manage your coins.
-Use: /tokens
+# Функция для получения текста о слишком низком балансе для месячной подписки
+def get_monthly_balance_too_low_text():
+    wallet_address = "2m1dCugubSioZXLuL4MJkmnCfpuVZoYH9xYFagrinP1g"
+    balance = "0"
+    price = "5"
+    
+    text = f"""⚠️ Balance too low:
+Your Subscription Wallet balance is {balance} SOL, which is not enough 
+to purchase the Monthly Subscription priced at {price} SOL.
 
-AI Architect Menu:
-💡 Generate coin ideas based on market trends.
-Use: /architect
+💸 Please add SOL to the address below to continue:
+🏦 Your Subscription Wallet Address:
+{wallet_address}"""
+    
+    return text
 
-Settings Menu:
-⚙️ Adjust transaction fees, slippage, and tips.
-Use: /settings
+# Функция для получения текста о слишком низком балансе для пожизненной подписки
+def get_lifetime_balance_too_low_text():
+    wallet_address = "2m1dCugubSioZXLuL4MJkmnCfpuVZoYH9xYFagrinP1g"
+    balance = "0"
+    price = "15"
+    
+    text = f"""⚠️ Balance too low:
+Your Subscription Wallet balance is {balance} SOL, which is not enough 
+to purchase the Lifetime Subscription priced at {price} SOL.
 
-Referral Menu:
-👥 Check out bonuses and details about our referral program.
-Use: /referrals
+💸 Please add SOL to the address below to continue:
+🏦 Your Subscription Wallet Address:
+{wallet_address}"""
+    
+    return text
 
-👨‍💻 Support - <a href="https://discord.gg/bundlebee">Alpha Discord</a>
+# Функция для получения текста страницы AI Coin Architect (требуется подписка)
+def get_ai_coin_subscription_required_text():
+    text = """💸 Subscription Required to use AI Coin Architect.
 
-📚 For detailed information, check our <a href="https://gitbook.io/bundlebee">GitBook</a>!"""
+It looks like you don't have an active subscription right now.
 
-# Обработчик команды /help
-@router.message(Command("help"))
-async def send_help(message: Message):
-    """
-    Обработчик команды /help с подробным меню помощи
-    """
-    help_text = get_help_text()
+💎 Unlock Full Access!
+With a subscription, you'll enjoy unlimited tokens, multi-wallet support, comments, AI text & image generation and more powerful features to enhance your experience."""
+    
+    return text
 
-    # Отправляем сообщение с кнопкой "Назад" и HTML-форматированием, но без превью ссылок
-    await message.answer(help_text, reply_markup=get_back_keyboard(), parse_mode=ParseMode.HTML, disable_web_page_preview=True)
+# Функция для получения текста страницы Launch (требуется подписка)
+def get_launch_subscription_required_text():
+    text = """💸 Subscription Required to Create Tokens
 
-# Функция для получения основного текста
-def get_main_text(username):
-    return f"""👋 Welcome {username}!
-Get started with launching and managing your tokens, all with AI features.
+It looks like you don't have an active subscription right now.
 
-🟡 Launch
-Try our bot with only the Dev Wallet purchasing. Subscribe for more!
+💎 Unlock Full Access!
+With a subscription, you'll enjoy unlimited tokens, multi-wallet support, comments and more powerful features to enhance your experience.
 
-💡 AI Coin Architect
-Get ready to launch coin ideas based on the most successful coins in the current 24h.
+🟡 Demo Launch
+Launch a token with limit features: one wallet and no auto comments.
 
-💵 Wallets
-Prepare wallets for a quick and efficient token launch.
+📘 Detailed Launch Guide"""
+    
+    return text
 
-🚀 Bump & Volume Bots
-Boost your coin visibility and trading volume with specialized tools.
-
-💬 Commenter
-Add comments that will be posted automatically on the token page.
-
-💎 Subscription
-Unlock the full potential with a subscription plan.
-
-👥 Referrals
-Share and earn through our referral system.
-
-⚙️ Settings
-Adjust slippage settings, gas fees for transactions, and tip amounts for Jito.
-
-📢 Socials
-Join us on <a href="https://t.me/bundlebee">Telegram</a>, <a href="https://twitter.com/bundlebee">Twitter</a> and <a href="https://youtube.com/bundlebee">Youtube</a>.
-
-⚠️ Beta Access
-BundleBee is currently in beta, if you encounter any bugs please report them in our <a href="https://discord.gg/bundlebee">Discord</a>.
-
-❓ Need help? Type /help."""
+# Функция для получения текста страницы "Нет кошельков"
+def get_no_wallets_text():
+    text = """⚠️ You don't have any wallets!
+Please press the button below to go to the wallets menu to create or load wallets."""
+    
+    return text
 
 # Функция для получения текста реферальной страницы
 def get_referral_text(user_id):
@@ -270,11 +394,21 @@ async def process_callback(callback_query):
             disable_web_page_preview=True
         )
     elif callback_query.data == 'launch':
-        text = "Launch section. Try our bot with only the Dev Wallet purchasing. Subscribe for more!"
-        await callback_query.message.edit_text(text, reply_markup=get_menu_keyboard(), parse_mode=ParseMode.HTML)
+        # Показываем страницу Launch с требованием подписки
+        launch_text = get_launch_subscription_required_text()
+        await callback_query.message.edit_text(
+            launch_text, 
+            reply_markup=get_launch_subscription_required_keyboard(),
+            parse_mode=ParseMode.HTML
+        )
     elif callback_query.data == 'ai_coin':
-        text = "AI Coin Architect. Get ready to launch coin ideas based on the most successful coins in the current 24h."
-        await callback_query.message.edit_text(text, reply_markup=get_menu_keyboard(), parse_mode=ParseMode.HTML)
+        # Показываем страницу AI Coin Architect с требованием подписки
+        ai_coin_text = get_ai_coin_subscription_required_text()
+        await callback_query.message.edit_text(
+            ai_coin_text, 
+            reply_markup=get_ai_coin_subscription_required_keyboard(),
+            parse_mode=ParseMode.HTML
+        )
     elif callback_query.data == 'wallets':
         # Показываем страницу с Wallets
         wallets_text = get_wallets_text()
@@ -316,11 +450,22 @@ async def process_callback(callback_query):
             parse_mode=ParseMode.HTML
         )
     elif callback_query.data == 'commenter':
-        text = "Commenter section. Add comments that will be posted automatically on the token page."
-        await callback_query.message.edit_text(text, reply_markup=get_menu_keyboard(), parse_mode=ParseMode.HTML)
+        # Показываем страницу Commenter с требованием подписки
+        commenter_text = get_commenter_subscription_required_text()
+        await callback_query.message.edit_text(
+            commenter_text, 
+            reply_markup=get_commenter_subscription_required_keyboard(),
+            parse_mode=ParseMode.HTML
+        )
     elif callback_query.data == 'subscription':
-        text = "Subscription section. Unlock the full potential with a subscription plan."
-        await callback_query.message.edit_text(text, reply_markup=get_menu_keyboard(), parse_mode=ParseMode.HTML)
+        # Показываем страницу с подпиской
+        user_id = callback_query.from_user.id
+        subscription_text = get_subscription_text(user_id)
+        await callback_query.message.edit_text(
+            subscription_text, 
+            reply_markup=get_subscription_keyboard(),
+            parse_mode=ParseMode.HTML
+        )
     elif callback_query.data == 'referrals':
         # Показываем страницу с реферальной программой
         user_id = callback_query.from_user.id
@@ -346,6 +491,165 @@ async def process_callback(callback_query):
             reply_markup=keyboard,
             parse_mode=ParseMode.HTML
         )
+    elif callback_query.data == 'back_to_subscription':
+        # Возврат к меню подписки
+        user_id = callback_query.from_user.id
+        subscription_text = get_subscription_text(user_id)
+        await callback_query.message.edit_text(
+            subscription_text, 
+            reply_markup=get_subscription_keyboard(),
+            parse_mode=ParseMode.HTML
+        )
+    elif callback_query.data == 'refresh_subscription':
+        # Обновляем информацию о подписке
+        user_id = callback_query.from_user.id
+        subscription_text = get_subscription_text(user_id)
+        await callback_query.message.edit_text(
+            subscription_text, 
+            reply_markup=get_subscription_keyboard(),
+            parse_mode=ParseMode.HTML
+        )
+    elif callback_query.data == 'subscribe_weekly':
+        # Показываем сообщение о низком балансе для недельной подписки
+        weekly_balance_too_low_text = get_weekly_balance_too_low_text()
+        await callback_query.message.edit_text(
+            weekly_balance_too_low_text,
+            reply_markup=get_balance_too_low_keyboard(),
+            parse_mode=ParseMode.HTML
+        )
+    elif callback_query.data == 'subscribe_monthly':
+        # Показываем сообщение о низком балансе для месячной подписки
+        monthly_balance_too_low_text = get_monthly_balance_too_low_text()
+        await callback_query.message.edit_text(
+            monthly_balance_too_low_text,
+            reply_markup=get_balance_too_low_keyboard(),
+            parse_mode=ParseMode.HTML
+        )
+    elif callback_query.data == 'subscribe_lifetime':
+        # Показываем сообщение о низком балансе для пожизненной подписки
+        lifetime_balance_too_low_text = get_lifetime_balance_too_low_text()
+        await callback_query.message.edit_text(
+            lifetime_balance_too_low_text,
+            reply_markup=get_balance_too_low_keyboard(),
+            parse_mode=ParseMode.HTML
+        )
+    elif callback_query.data == 'demo_launch':
+        # Показываем страницу с предупреждением об отсутствии кошельков
+        no_wallets_text = get_no_wallets_text()
+        await callback_query.message.edit_text(
+            no_wallets_text,
+            reply_markup=get_no_wallets_keyboard(),
+            parse_mode=ParseMode.HTML
+        )
+
+# Обработчик команды /start
+@router.message(Command("start"))
+async def send_welcome(message: Message):
+    """
+    Обработчик команды /start
+    """
+    username = message.from_user.username or message.from_user.first_name
+    
+    welcome_text = get_main_text(username)
+
+    # Отправляем сообщение с инлайн-клавиатурой и HTML-форматированием, но без превью ссылок
+    await message.answer(welcome_text, reply_markup=get_menu_keyboard(), parse_mode=ParseMode.HTML, disable_web_page_preview=True)
+
+# Обработчик команды /help
+@router.message(Command("help"))
+async def send_help(message: Message):
+    """
+    Обработчик команды /help с подробным меню помощи
+    """
+    help_text = get_help_text()
+
+    # Отправляем сообщение с кнопкой "Назад" и HTML-форматированием, но без превью ссылок
+    await message.answer(help_text, reply_markup=get_back_keyboard(), parse_mode=ParseMode.HTML, disable_web_page_preview=True)
+
+# Обработчик команды /subscription
+@router.message(Command("subscription"))
+async def send_subscription(message: Message):
+    """
+    Обработчик команды /subscription
+    """
+    user_id = message.from_user.id
+    subscription_text = get_subscription_text(user_id)
+    
+    # Отправляем сообщение с информацией о подписке
+    await message.answer(subscription_text, reply_markup=get_subscription_keyboard(), parse_mode=ParseMode.HTML)
+
+# Функция для создания текста справки
+def get_help_text():
+    return """🐝 Welcome to the BundleBee help menu:
+
+Main Menu:
+🔍 Quick access to all major functions of the bot.
+Use: /start
+
+Subscription Menu:
+💎 Subscribe and manage your subscription.
+Use: /subscription
+
+Wallet Menu:
+💵 Create and manage wallets, and distribute SOL to buy wallets.
+Use: /wallets
+
+Coin Menu:
+🟡 Create and manage your coins.
+Use: /tokens
+
+AI Architect Menu:
+💡 Generate coin ideas based on market trends.
+Use: /architect
+
+Settings Menu:
+⚙️ Adjust transaction fees, slippage, and tips.
+Use: /settings
+
+Referral Menu:
+👥 Check out bonuses and details about our referral program.
+Use: /referrals
+
+👨‍💻 Support - <a href="https://discord.gg/bundlebee">Alpha Discord</a>
+
+📚 For detailed information, check our <a href="https://gitbook.io/bundlebee">GitBook</a>!"""
+
+# Функция для получения основного текста
+def get_main_text(username):
+    return f"""👋 Welcome {username}!
+Get started with launching and managing your tokens, all with AI features.
+
+🟡 Launch
+Try our bot with only the Dev Wallet purchasing. Subscribe for more!
+
+💡 AI Coin Architect
+Get ready to launch coin ideas based on the most successful coins in the current 24h.
+
+💵 Wallets
+Prepare wallets for a quick and efficient token launch.
+
+🚀 Bump & Volume Bots
+Boost your coin visibility and trading volume with specialized tools.
+
+💬 Commenter
+Add comments that will be posted automatically on the token page.
+
+💎 Subscription
+Unlock the full potential with a subscription plan.
+
+👥 Referrals
+Share and earn through our referral system.
+
+⚙️ Settings
+Adjust slippage settings, gas fees for transactions, and tip amounts for Jito.
+
+📢 Socials
+Join us on <a href="https://t.me/bundlebee">Telegram</a>, <a href="https://twitter.com/bundlebee">Twitter</a> and <a href="https://youtube.com/bundlebee">Youtube</a>.
+
+⚠️ Beta Access
+BundleBee is currently in beta, if you encounter any bugs please report them in our <a href="https://discord.gg/bundlebee">Discord</a>.
+
+❓ Need help? Type /help."""
 
 # Регистрация роутера
 dp.include_router(router)
